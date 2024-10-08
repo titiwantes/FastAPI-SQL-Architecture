@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field, AnyUrl, field_validator
-from typing import Any
+from typing import Any, Optional
 
 
 class DatabaseSettings(BaseSettings):
@@ -9,7 +9,7 @@ class DatabaseSettings(BaseSettings):
     DB_USER: str  # = Field("user")
     DB_HOST: str  # = Field("localhost")
     DB_PASSWORD: str  # = Field("password")
-    DB_URL: AnyUrl | None
+    DB_URL: Optional[str] = None
 
     @field_validator("DB_URL", pre=True)
     def assemble_db_connection(cls, v: str | None, values: dict[str, Any]) -> Any:
@@ -23,6 +23,12 @@ class DatabaseSettings(BaseSettings):
             port=values.get("DB_PORT"),
             path=f"/{values.get('DB_NAME') or ''}",
         )
+
+
+class TOKEN_SETTINGS(BaseSettings):
+    SECRET_KEY: str = Field("SECRET_KEY")
+    ALGORITHM: str = Field("HS256")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(30)
 
 
 class Settings(DatabaseSettings):
