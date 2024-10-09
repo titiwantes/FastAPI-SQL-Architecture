@@ -1,37 +1,43 @@
 import sqlalchemy as sa
-import crud.user_crud
-import utils
-import schemas
-import crud
+
+import api.crud.user_auth_data_crud as uad_crud
+import api.crud.user_crud as user_crud
+import api.schemas.auth_schemas as auth_sch
+import api.schemas.user_auth_data_schema as uad_sch
+import api.schemas.user_schemas as user_sch
+import api.utils.security as security
 
 
 class UserService:
-    def __init__(self, dbs: tuple[sa.Session, sa.AliasSession]):
+    def __init__(self, dbs: tuple[sa.orm.Session, sa.orm.Session]):
         self.reader, self.writer = dbs
 
-    def signup(self, auth: schemas.Signup):
-        existing_user = crud.UserCrud.get_user_by_email(
+    def signup(self, auth: auth_sch.Signup):
+        existing_user = user_crud.UserCrud.get_user_by_email(
             db=self.reader, email=auth.email
         )
         if existing_user:
             raise ValueError("User already exists")
 
-        password_hash = utils.hash_password(auth.password)
+        password_hash = security.hash_password(auth.password)
 
-        user = crud.UserCrud.create(
+        user = user_crud.UserCrud.create(
             self.writer,
-            schemas.UserCreate(),
+            user_sch.UserCreate(),
         )
 
-        user_auth_data = crud.UserAuthDataCrud.create(
+        user_auth_data = uad_crud.UserAuthDataCrud.create(
             self.writer,
-            schemas.UserAuthDataCreate(
-                email=auth.email, password_hash=password_hash, id=user.id
+            uad_sch.UserAuthDataCreate(
+                email=auth.email,
+                password_hash=password_hash,
+                user_id=user.id,
+                name=auth.name,
             ),
         )
 
-        return schemas.UserCreateOut(
-            name=user.name,
+        return user_sch.UserCreateOut(
+            name=user_auth_data.name,
             email=user_auth_data.email,
             id=user.id,
         )

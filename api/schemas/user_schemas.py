@@ -1,6 +1,6 @@
 from typing import Optional
 
-import models.base as base
+import api.models.base as base
 
 
 class UserCreate(base.BaseModel):
@@ -8,7 +8,7 @@ class UserCreate(base.BaseModel):
 
 
 class UserCreateOut(base.BaseModel):
-    id: str
+    id: int
     email: str
     name: str
 

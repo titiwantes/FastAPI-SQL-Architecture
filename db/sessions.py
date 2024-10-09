@@ -1,10 +1,14 @@
+import enum
+import typing
+
 import sqlalchemy as sa
+
 import core.settings
-from typing import Generator
-from enum import Enum
+
+settings = core.settings.settings
 
 
-class SessionType(Enum):
+class SessionType(enum.Enum):
     WRITER = "writer"
     READER = "reader"
 
@@ -16,7 +20,7 @@ def get_engine() -> sa.engine.base.Engine:
     global _engine
     if _engine is not None:
         return _engine
-    return sa.create_engine(core.settings.DATABASE_URL)
+    return sa.create_engine(settings.DB_URL)
 
 
 def create_session(
@@ -32,8 +36,10 @@ def create_session(
 
 def get_db_writer(
     *, autocommit: bool = False, autoflush: bool = True
-) -> Generator[sa.orm.Session]:
-    db = create_session(SessionType.WRITER, autocommit, autoflush)()
+) -> typing.Generator[sa.orm.Session, None, None]:
+    db = create_session(
+        session_type=SessionType.WRITER, autocommit=autocommit, autoflush=autoflush
+    )()
     try:
         yield db
     finally:
@@ -42,8 +48,10 @@ def get_db_writer(
 
 def get_db_reader(
     *, autocommit: bool = False, autoflush: bool = True
-) -> Generator[sa.orm.Session]:
-    db = create_session(SessionType.READER, autocommit, autoflush)()
+) -> typing.Generator[sa.orm.Session, None, None]:
+    db = create_session(
+        session_type=SessionType.READER, autocommit=autocommit, autoflush=autoflush
+    )()
     try:
         yield db
     finally:
@@ -56,9 +64,17 @@ def get_dbs(
     reader_autoflush: bool = True,
     writer_autocommit: bool = False,
     writer_autoflush: bool = True
-) -> Generator[tuple[sa.orm.Session, sa.orm.Session]]:
-    reader = create_session(SessionType.READER, reader_autocommit, reader_autoflush)()
-    writer = create_session(SessionType.WRITER, writer_autocommit, writer_autoflush)()
+) -> typing.Generator[tuple[sa.orm.Session, sa.orm.Session], None, None]:
+    reader = create_session(
+        session_type=SessionType.READER,
+        autocommit=reader_autocommit,
+        autoflush=reader_autoflush,
+    )()
+    writer = create_session(
+        session_type=SessionType.WRITER,
+        autocommit=writer_autocommit,
+        autoflush=writer_autoflush,
+    )()
     try:
         yield reader, writer
     finally:

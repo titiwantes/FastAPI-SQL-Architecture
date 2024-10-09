@@ -1,10 +1,11 @@
 import datetime
 
 import pydantic
-import sqlalchemy
-from sqlalchemy.ext.declarative import declarative_base
+import sqlalchemy as sa
+import sqlalchemy.ext.declarative as declarative
+import sqlalchemy.sql.functions as sql
 
-Base = declarative_base()
+Base = declarative.declarative_base()
 
 
 class BaseModel(pydantic.BaseModel):
@@ -13,17 +14,17 @@ class BaseModel(pydantic.BaseModel):
 
 
 class RecordTimestaps:
-    created_at = sqlalchemy.Column(
-        sqlalchemy.TIMESTAMP,
-        default=datetime.datetime.now(),
+    created_at = sa.Column(
+        sa.TIMESTAMP,
+        default=sql.func.now(),
         nullable=False,
-        server_default=sqlalchemy.func.now(),
+        server_default=sql.func.now(),
     )
 
-    updated_at = sqlalchemy.Column(
-        sqlalchemy.DateTime,
-        default=datetime.datetime.now(),
-        onupdate=datetime.datetime.now(),
-        server_default=sqlalchemy.func.now(),
+    updated_at = sa.Column(
+        sa.TIMESTAMP,
+        default=sql.func.now(),
+        onupdate=sql.func.now(),
+        server_default=sql.func.now(),
         nullable=False,
     )

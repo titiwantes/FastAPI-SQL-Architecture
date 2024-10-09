@@ -1,19 +1,20 @@
 import sqlalchemy as sa
-import schemas
-import models
+
+import api.models.user_auth_data as uad_mdl
+import api.schemas.user_auth_data_schema as uad_sch
 
 
 class UserAuthDataCrud:
-    def __init__(self, dbs: tuple[sa.Session, sa.AliasSession]):
-        self.reader, self.writer = dbs
-
-    def create(self, user_auth_data: schemas.UserAuthDataCreate) -> models.UserAuthData:
+    @classmethod
+    def create(
+        cls, db: sa.orm.Session, user_auth_data: uad_sch.UserAuthDataCreate
+    ) -> uad_mdl.UserAuthData:
         try:
-            user_auth_data = models.UserAuthData(**user_auth_data.model_dump())
-            self.writer.add(user_auth_data)
-            self.writer.commit()
-            self.writer.refresh(user_auth_data)
+            user_auth_data = uad_mdl.UserAuthData(**user_auth_data.model_dump())
+            db.add(user_auth_data)
+            db.commit()
+            db.refresh(user_auth_data)
             return user_auth_data
         except Exception as e:
-            self.writer.rollback()
+            db.rollback()
             raise e

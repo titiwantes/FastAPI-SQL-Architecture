@@ -1,8 +1,9 @@
 import datetime
 
-import core.settings
 import jose
 import passlib.context
+
+import core.settings
 
 pwd_context = passlib.context.CryptContext(schemes=["bcrypt"], deprecated="auto")
 settings = core.settings.settings

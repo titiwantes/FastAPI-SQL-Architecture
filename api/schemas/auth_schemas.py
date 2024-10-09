@@ -1,12 +1,12 @@
-from models import BaseModel
+import api.models.base as base
 
 
-class Login(BaseModel):
+class Login(base.BaseModel):
     email: str
     name: str
 
 
-class Signup(BaseModel):
+class Signup(base.BaseModel):
     email: str
     name: str
     password: str

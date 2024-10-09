@@ -1,16 +1,21 @@
-import base
 import sqlalchemy as sa
+import sqlalchemy.dialects.mysql as mysql
+import sqlalchemy.orm as orm
+
+import api.models.base as base
 
 
 class User(base.Base, base.RecordTimestaps):
+
     __tablename__ = "users"
 
     id = sa.Column(
-        sa.String,
+        mysql.BIGINT(unsigned=True),
         primary_key=True,
         nullable=False,
-        default=sa.func.uuid(),
-        server_default=sa.func.uuid(),
+        autoincrement=True,
     )
 
-    auth_data = sa.orm.relationship("UserAuthData", back_populates="user")
+    auth_data = orm.relationship(
+        "UserAuthData", back_populates="user", cascade="all, delete-orphan"
+    )
