@@ -8,7 +8,7 @@ router = fastapi.APIRouter()
 
 
 @router.post("/users/signup")
-def signup(
+async def signup(
     user: auth_sch.Signup,
     dbs=fastapi.Depends(db.get_dbs),
 ):

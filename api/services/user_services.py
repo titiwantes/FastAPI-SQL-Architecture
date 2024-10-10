@@ -6,6 +6,7 @@ import api.schemas.auth_schemas as auth_sch
 import api.schemas.user_auth_data_schema as uad_sch
 import api.schemas.user_schemas as user_sch
 import api.utils.security as security
+import core.exeptions.exception as exeptions
 
 
 class UserService:
@@ -17,7 +18,7 @@ class UserService:
             db=self.reader, email=auth.email
         )
         if existing_user:
-            raise ValueError("User already exists")
+            raise exeptions.NotFound("User already exists")
 
         password_hash = security.hash_password(auth.password)
 
