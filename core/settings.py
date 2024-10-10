@@ -1,32 +1,48 @@
-from pydantic_settings import BaseSettings
-from pydantic import Field, AnyUrl, field_validator
-from typing import Any
+from typing import Any, Optional
+
+import pydantic
+import pydantic.class_validators
+import pydantic_settings
 
 
-class DatabaseSettings(BaseSettings):
-    DB_PORT: int  # = Field(5432)
-    DB_NAME: str  # = Field("mysql")
-    DB_USER: str  # = Field("user")
-    DB_HOST: str  # = Field("localhost")
-    DB_PASSWORD: str  # = Field("password")
-    DB_URL: AnyUrl | None
+class DatabaseSettings(pydantic_settings.BaseSettings):
+    DB_PORT: int = pydantic.Field(5432)
+    DB_NAME: str = pydantic.Field("mysql")
+    DB_USER: str = pydantic.Field("user")
+    DB_HOST: str = pydantic.Field("localhost")
+    DB_PASSWORD: str = pydantic.Field("password")
+    DB_URL: Optional[str] = None
 
-    @field_validator("DB_URL", pre=True)
-    def assemble_db_connection(cls, v: str | None, values: dict[str, Any]) -> Any:
+    @pydantic.field_validator("DB_URL", mode="before")
+    def assemble_db_connection(
+        cls, v: str, info: pydantic.FieldValidationInfo
+    ) -> pydantic.AnyUrl:
+        values = info.data
         if isinstance(v, str):
             return v
-        return AnyUrl.build(
+        url = pydantic.AnyUrl.build(
             scheme="mysql+pymysql",
-            user=values.get("DB_USER"),
+            username=values.get("DB_USER"),
             password=values.get("DB_PASSWORD"),
             host=values.get("DB_HOST"),
             port=values.get("DB_PORT"),
-            path=f"/{values.get('DB_NAME') or ''}",
+            path=values.get("DB_NAME", ""),
         )
+        return str(url)
 
 
-class Settings(DatabaseSettings):
+class TOKEN_SETTINGS(pydantic_settings.BaseSettings):
+    SECRET_KEY: str = pydantic.Field("SECRET_KEY")
+    ALGORITHM: str = pydantic.Field("HS256")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = pydantic.Field(30)
+
+
+class Settings(DatabaseSettings, TOKEN_SETTINGS):
+    # for dotenv
+    model_config = pydantic_settings.SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8"
+    )
     DEBUG: bool = False
 
 
-settings = Settings()
+settings = Settings(_env_file=".env", _env_file_encoding="utf-8")

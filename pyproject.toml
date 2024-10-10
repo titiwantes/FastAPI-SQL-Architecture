@@ -13,6 +13,10 @@ pydantic = "^2.9.2"
 alembic = "^1.13.3"
 SQLAlchemy = "^2.0.35"
 pydantic-settings = "^2.5.2"
+passlib = "^1.7.4"
+python-jose = "^3.3.0"
+uvicorn = "^0.31.0"
+pymysql = "^1.1.1"
 
 
 [tool.poetry.group.dev.dependencies]
