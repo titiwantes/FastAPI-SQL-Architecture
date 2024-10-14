@@ -3,6 +3,7 @@ import sqlalchemy as sa
 import api.models.user as user_mdls
 import api.models.user_auth_data as uad
 import api.schemas.user_schemas as user_sch
+import core.exeptions.exception as exceptions
 
 
 class UserCrud:
@@ -16,8 +17,8 @@ class UserCrud:
                 .first()
             )
             return user
-        except Exception as e:
-            raise e
+        except Exception:
+            raise exceptions.InternalServerError()
 
     @classmethod
     def create(cls, db: sa.orm.Session, user: user_sch.UserCreate) -> user_mdls.User:
@@ -27,6 +28,18 @@ class UserCrud:
             db.commit()
             db.refresh(user)
             return user
-        except Exception as e:
-            db.rollback()
-            raise e
+        except Exception:
+            raise exceptions.InternalServerError()
+
+    @classmethod
+    def get_user_auth_data_by_email(cls, db: sa.orm.Session, email: str):
+        try:
+            user_auth_data = (
+                db.query(uad.UserAuthData)
+                .filter(uad.UserAuthData.email == email)
+                .first()
+            )
+            return user_auth_data
+
+        except Exception:
+            raise exceptions.InternalServerError()

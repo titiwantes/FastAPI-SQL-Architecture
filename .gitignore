@@ -20,10 +20,6 @@ env/
 dist/
 build/
 
-# Docker
-*.log
-docker-compose.override.yml
-docker-compose*.yml
 
 # IDEs et éditeurs de code
 .vscode/

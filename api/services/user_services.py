@@ -18,7 +18,7 @@ class UserService:
             db=self.reader, email=auth.email
         )
         if existing_user:
-            raise exeptions.NotFound("User already exists")
+            raise exeptions.NotFound("Email already registered")
 
         password_hash = security.hash_password(auth.password)
 
@@ -42,3 +42,17 @@ class UserService:
             email=user_auth_data.email,
             id=user.id,
         )
+
+    def login(self, email: str) -> auth_sch.LoginOut:
+        try:
+            user_auth_data = user_crud.UserCrud.get_user_auth_data_by_email(
+                email=email, db=self.reader
+            )
+            if not user_auth_data:
+                raise exeptions.NotFound("User not found")
+
+            user = user_crud.UserCrud.get_user_by_email(db=self.reader, email=email)
+
+            return auth_sch.LoginOut(email=email, id=user.id, name=user_auth_data.name)
+        except:
+            raise exeptions.InternalServerError()

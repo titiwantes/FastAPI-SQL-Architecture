@@ -1,9 +1,9 @@
 import fastapi
 import fastapi.middleware
 import fastapi.middleware.cors
-import core.exeptions.exception as exeptions
 
 import api.routers.users_router as users
+import core.exeptions.exception as exeptions
 
 app = fastapi.FastAPI(
     title="FastAPI example",

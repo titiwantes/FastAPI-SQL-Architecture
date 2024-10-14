@@ -16,3 +16,12 @@ async def signup(
     result = user_service.signup(user)
 
     return result
+
+
+@router.post("/users/login")
+def login(
+    user: auth_sch.Login,
+    dbs=fastapi.Depends(db.get_dbs),
+):
+    user_service = user_srv.UserService(dbs=dbs)
+    return user_service.login(email=user.email)
