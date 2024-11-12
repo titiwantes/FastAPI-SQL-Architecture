@@ -5,7 +5,7 @@ import sqlalchemy.orm as orm
 import api.models.base as base
 
 
-class User(base.Base, base.RecordTimestaps):
+class User(base.Base, base.RecordTimestamps):
 
     __tablename__ = "users"
 
@@ -13,7 +13,6 @@ class User(base.Base, base.RecordTimestaps):
         mysql.BIGINT(unsigned=True),
         primary_key=True,
         nullable=False,
-        autoincrement=True,
     )
 
     auth_data = orm.relationship(

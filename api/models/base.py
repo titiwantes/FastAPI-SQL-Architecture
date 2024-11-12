@@ -13,7 +13,7 @@ class BaseModel(pydantic.BaseModel):
         pass
 
 
-class RecordTimestaps:
+class RecordTimestamps:
     created_at = sa.Column(
         sa.TIMESTAMP,
         default=sql.func.now(),

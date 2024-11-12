@@ -3,7 +3,7 @@ import sqlalchemy as sa
 import api.crud.user_auth_data_crud as uad_crud
 import api.crud.user_crud as user_crud
 import api.schemas.auth_schemas as auth_sch
-import api.schemas.user_auth_data_schema as uad_sch
+import api.schemas.user_auth_data_schemas as uad_sch
 import api.schemas.user_schemas as user_sch
 import api.utils.security as security
 import core.exeptions.exception as exeptions

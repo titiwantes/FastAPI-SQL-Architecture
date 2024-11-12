@@ -5,7 +5,7 @@ import sqlalchemy.orm as orm
 import api.models.base as base
 
 
-class UserAuthData(base.Base):
+class UserAuthData(base.Base, base.RecordTimestamps):
 
     __tablename__ = "user_auth_data"
     user_id = sa.Column(

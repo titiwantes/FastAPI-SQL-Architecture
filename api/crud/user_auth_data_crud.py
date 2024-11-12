@@ -1,7 +1,8 @@
 import sqlalchemy as sa
 
 import api.models.user_auth_data as uad_mdl
-import api.schemas.user_auth_data_schema as uad_sch
+import api.schemas.user_auth_data_schemas as uad_sch
+import core.exeptions.exception as exceptions
 
 
 class UserAuthDataCrud:
@@ -17,4 +18,4 @@ class UserAuthDataCrud:
             return user_auth_data
         except Exception as e:
             db.rollback()
-            raise e
+            raise exceptions.InternalServerError()

@@ -3,6 +3,7 @@ import fastapi.middleware
 import fastapi.middleware.cors
 
 import api.routers.users_router as users
+import api.routers.items_router as items
 import core.exeptions.exception as exeptions
 
 app = fastapi.FastAPI(
@@ -13,6 +14,7 @@ app = fastapi.FastAPI(
 )
 
 app.include_router(users.router)
+app.include_router(items.router)
 
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
